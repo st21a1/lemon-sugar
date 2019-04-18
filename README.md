@@ -21,7 +21,7 @@ QQ群：
 
 ![柠檬糖群](doc/img/group_info.png)
 ### 成员
-* [ ]st21a1 | st21a1@foxmail.com| 1839953301
-* [ ]Cockroach39| 578678843@qq.com | 578678843
-* [ ]ethanmiles | percivalstr@163.com | -
+* [ ] st21a1 | st21a1@foxmail.com| 1839953301
+* [ ] Cockroach39| 578678843@qq.com | 578678843
+* [ ] ethanmiles | percivalstr@163.com | -
 ## 免责声明
