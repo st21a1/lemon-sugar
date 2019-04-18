@@ -17,7 +17,7 @@
 QQ群：
 【柠檬糖project】：https://jq.qq.com/?_wv=1027&k=5iDMyBd
 
-![柠檬糖群](%E6%9F%A0%E6%AA%AC%E7%B3%96%E7%BE%A4.png)
+![柠檬糖群](doc/img/group_info.png)
 
 QQ群：123456
 QQ群：123456
