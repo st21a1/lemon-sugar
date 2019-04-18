@@ -20,7 +20,7 @@ QQ群：123456
 ### 开发成员
 账户名 | 邮箱 | qq
 
-https://github.com/st21a1 | st21a1@foxmail.com| 1839953301
+st21a1 | st21a1@foxmail.com| 1839953301
 
 账户名 | 邮箱 | qq
 
