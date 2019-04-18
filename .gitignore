@@ -55,3 +55,8 @@ jspm_packages
 
 # Yarn Integrity file
 .yarn-integrity
+
+
+# extra
+lemon_sugar/audio/*
+
