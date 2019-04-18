@@ -14,11 +14,16 @@
 - 33333
 ## Contribute
 ### 加入方式
-QQ群：123456
+QQ群：
+【柠檬糖project】：https://jq.qq.com/?_wv=1027&k=5iDMyBd
+
+![柠檬糖群](%E6%9F%A0%E6%AA%AC%E7%B3%96%E7%BE%A4.png)
+
 QQ群：123456
 QQ群：123456
 ### 开发成员
 账户名 | 邮箱 | qq
+
 
 st21a1 | st21a1@foxmail.com| 1839953301
 
