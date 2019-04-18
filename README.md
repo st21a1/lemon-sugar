@@ -5,7 +5,7 @@
 ### Dependency
 RPG maker MV 1.6.2
 ## 进度
-### 任务版
+### 未完成
 * [ ] 序章
 ### 已完成
 * [x] 初步设计
@@ -20,8 +20,8 @@ QQ群：
 【柠檬糖project】：https://jq.qq.com/?_wv=1027&k=5iDMyBd
 
 ![柠檬糖群](doc/img/group_info.png)
-### 开发成员
-st21a1 | st21a1@foxmail.com| 1839953301
-Cockroach39| 578678843@qq.com | 578678843
-ethanmiles | percivalstr@163.com | -
+### 成员
+* [ ]st21a1 | st21a1@foxmail.com| 1839953301
+* [ ]Cockroach39| 578678843@qq.com | 578678843
+* [ ]ethanmiles | percivalstr@163.com | -
 ## 免责声明
