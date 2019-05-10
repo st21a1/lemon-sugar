@@ -206,7 +206,7 @@ setInterval(gt.tiktok(), ONE_MINUTE)
 
 
 function isTriggerd(name) {
-    return take(name).size && true
+    return dock.take(name).size && true
 }
 
 function addLoopEvent() {}
