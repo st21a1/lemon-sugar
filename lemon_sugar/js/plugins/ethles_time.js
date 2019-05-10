@@ -99,6 +99,14 @@ class LS_Time {
         this.time += 1440 * days;
     }
 
+    /**
+     * 
+     * @param {LS_Time} t 
+     */
+    setTime(t) {
+        this.time = t.getTime()
+    }
+
 };
 
 
@@ -135,6 +143,25 @@ class TimeEvent {
         if (isLoopEvent) {
             this.time.skipMinutes(this.loopTime)
         }
+    }
+
+
+    /**
+     * 更新内部的计时器到指定时间后
+     * @param {LS_Time} time - 时间
+     */
+    gotoLoopAfter(time) {
+        while (time.getTime() > this.time.getTime()) {
+            this.nextLoop()
+        }
+    }
+
+    /**
+     * 重新设置内部的计时器到指定时间开始
+     * @param {LS_Time} time - 时间
+     */
+    resetLoopAt(time) {
+        this.time.setTime(time)
     }
 
 }
@@ -201,21 +228,42 @@ class TimeManager {
     /**
      * 更新世界状态
      * 包括更新游戏时间，发送当前发生的事件，然后对该事件进行删除或更新
+     * @param {number} step - 分钟
      */
-    tiktok() {
-        this.gameTime.skipMinutes(1);
+    tiktok(step) {
+        this.gameTime.skipMinutes(step);
         this.events = this.events.map(
             (e) => {
                 if (e.time.getTime() === this.gameTime.getTime()) {
                     this.happend.push(e.name);
                     if (e.isLoopEvent()) {
-                        return e.nextLoop();
+                        if (step < e.loopTime) {
+                            return e.nextLoop();
+                        } else {
+                            return e.gotoLoopAfter(this.gameTime)
+                        }
+
+                    } else {
+                        return;
                     }
                 }
             }, this
         );
         this.listeners.forEach((e) => e.mail(this.happend));
         this.happend = [];
+    }
+
+    /**
+     * 跳转到指定天数
+     * 不能跳到过去的时间
+     * @param {day} num 
+     */
+    nextDays(days) {
+        if (days <= this.gameTime.getDay()) {
+            return;
+        }
+        this.gameTime.skipDays(days);
+        this.tiktok();
     }
 }
 
@@ -253,22 +301,37 @@ tm.addListener(ec);
 setInterval(tm.tiktok(), ONE_MINUTE);
 
 
+/**
+ * ==================================
+ * --------------API-----------------
+ * ==================================
+ */
+
+/**
+ * 检测一个事件名称是否已经触发
+ * 一次性
+ * @param {string} name - 事件名称
+ */
 function isTriggerd(name) {
     return ec.take(name)
 }
 
 function addMinuteLoopEvent(name, day, hour, minute, freq) {
-    ec.addEvent(TimeEventGenerator(EVENT_TYPE.MINUTE_LOOP, name, new LS_Time(day, hour, minute), freq))
+    tm.addEvent(TimeEventGenerator(EVENT_TYPE.MINUTE_LOOP, name, new LS_Time(day, hour, minute), freq))
 }
 
 function addHourLoopEvent(name, day, hour, minute, freq) {
-    ec.addEvent(TimeEventGenerator(EVENT_TYPE.HOUR_LOOP, name, new LS_Time(day, hour, minute), freq))
+    tm.addEvent(TimeEventGenerator(EVENT_TYPE.HOUR_LOOP, name, new LS_Time(day, hour, minute), freq))
 }
 
 function addDayLoopEvent(name, day, hour, minute, freq) {
-    ec.addEvent(TimeEventGenerator(EVENT_TYPE.DAY_LOOP, name, new LS_Time(day, hour, minute), freq))
+    tm.addEvent(TimeEventGenerator(EVENT_TYPE.DAY_LOOP, name, new LS_Time(day, hour, minute), freq))
 }
 
-function addEvent(name, day, hour, minute) {
-    ec.addEvent(TimeEventGenerator(EVENT_TYPE.ONE_SHOT, new LS_Time(day, hour, minute)))
+function addTimeEvent(name, day, hour, minute) {
+    tm.addEvent(TimeEventGenerator(EVENT_TYPE.ONE_SHOT, new LS_Time(day, hour, minute)))
+}
+
+function nextDays(days) {
+    tm.nextDays(days)
 }
