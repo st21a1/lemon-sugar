@@ -10,8 +10,6 @@
  */
 
 
-
-
 //JavaScript的时间基础单位是毫秒
 const ONE_HOUR = 1000 * 60 * 60;
 const ONE_MINUTE = 1000 * 60;
@@ -206,8 +204,8 @@ class TimeManager {
      * @param {TimeEvent} event 
      */
     addEvent(event) {
+        if (!this.events.some(name => name == event.name)) {
 
-        if (!this.events.some(name => name === event.name)) {
             this.events.push(event)
             console.log(this.events)
         }
@@ -231,6 +229,7 @@ class TimeManager {
      * 包括更新游戏时间，发送当前发生的事件，然后对该事件进行删除或更新
      * @param {number} step - 分钟
      */
+
     tiktok(step = 1) {
         this.gameTime.skipMinutes(step);
         let newEvents = [];
@@ -249,6 +248,7 @@ class TimeManager {
         if (this.happend.length > 0) {
             this.listeners.forEach((e) => e(this.happend));
         }
+
         this.happend = [];
     }
 
@@ -276,6 +276,7 @@ class TimeManager {
         }, 1000)
 
     }
+
 }
 
 /**
@@ -286,6 +287,7 @@ class EventCollector {
     constructor() {
         this.box = []
     }
+
 
     exist(findName) {
         return this.box.some((name) => name == findName)
@@ -304,10 +306,12 @@ class EventCollector {
 
 ec = new EventCollector();
 tm = new TimeManager();
+
 tm.addListener((name) => {
     ec.box.push(name)
 });
 tm.run()
+
 
 
 
@@ -330,10 +334,12 @@ function isTriggerd(name) {
     } else {
         $gameVariables.setValue(idx_map[name], 0);
     }
+
 }
 
 function addMinuteLoopEvent(name, day, hour, minute, freq) {
     tm.addEvent(TimeEventGenerator(EVENT_TYPE.MINUTE_LOOP, name, new LS_Time(day, hour, minute), freq))
+
 }
 
 function 游戏时间() {
@@ -360,4 +366,5 @@ var idx_map = {}
 function 增加事件(name, day, hour, minute, index) {
     addTimeEvent(name, day, hour, minute)
     idx_map[name] = index;
+
 }
