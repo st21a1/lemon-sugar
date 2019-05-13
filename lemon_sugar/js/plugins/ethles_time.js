@@ -9,6 +9,9 @@
  * 
  */
 
+
+
+
 //JavaScript的时间基础单位是毫秒
 const ONE_HOUR = 1000 * 60 * 60;
 const ONE_MINUTE = 1000 * 60;
@@ -36,12 +39,8 @@ EVENT_TYPE = new EVENT_TYPE();
  * @param {number} minute 分钟 
  */
 class LS_Time {
-    constructor(date, hour, minute) {
-        let _date = date || 0;
-        let _hour = hour || 0;
-        let _minute = minute || 0;
-
-        this.time = _minute + (60 * hour) + (1440 * date)
+    constructor(date = 0, hour = 0, minute = 0) {
+        this.time = minute + (60 * hour) + (1440 * date)
     }
     /**
      * Get time of game. - 返回当前游戏时间，用作比较大小。
@@ -88,7 +87,7 @@ class LS_Time {
      * @param {number} hours 
      */
     skipHours(hours) {
-        this.time += 60 * hours;
+        this.time += (60 * hours);
     }
 
     /**
@@ -96,7 +95,7 @@ class LS_Time {
      * @param {number} days 
      */
     skipDays(days) {
-        this.time += 1440 * days;
+        this.time += (1440 * days);
     }
 
     /**
@@ -140,7 +139,7 @@ class TimeEvent {
      * 为重复时间事件更新内部的计时器到下一次触发时间
      */
     nextLoop() {
-        if (isLoopEvent) {
+        if (this.isLoopEvent) {
             this.time.skipMinutes(this.loopTime)
         }
     }
@@ -176,15 +175,15 @@ class TimeEvent {
 function TimeEventGenerator(type, name, activeTime, loopTime) {
     switch (type) {
         case EVENT_TYPE.ONE_SHOT:
-            return TimeEvent(name, activeTime, false, -1)
+            return new TimeEvent(name, activeTime, false, -1)
         case EVENT_TYPE.MINUTE_LOOP:
-            return TimeEvent(name, activeTime, true, loopTime)
+            return new TimeEvent(name, activeTime, true, loopTime)
         case EVENT_TYPE.HOUR_LOOP:
-            return TimeEvent(name, activeTime, true, 60 * loopTime)
+            return new TimeEvent(name, activeTime, true, 60 * loopTime)
         case EVENT_TYPE.DAY_LOOP:
-            return TimeEvent(name, activeTime, true, 1440 * loopTime)
+            return new TimeEvent(name, activeTime, true, 1440 * loopTime)
         default:
-            return TimeEvent(name, activeTime, false, -1)
+            return new TimeEvent(name, activeTime, false, -1)
     }
 }
 
@@ -207,8 +206,10 @@ class TimeManager {
      * @param {TimeEvent} event 
      */
     addEvent(event) {
-        if (!this.events.some((name) => name === event.name)) {
+
+        if (!this.events.some(name => name === event.name)) {
             this.events.push(event)
+            console.log(this.events)
         }
     }
 
@@ -230,26 +231,24 @@ class TimeManager {
      * 包括更新游戏时间，发送当前发生的事件，然后对该事件进行删除或更新
      * @param {number} step - 分钟
      */
-    tiktok(step) {
+    tiktok(step = 1) {
         this.gameTime.skipMinutes(step);
-        this.events = this.events.map(
-            (e) => {
-                if (e.time.getTime() === this.gameTime.getTime()) {
-                    this.happend.push(e.name);
-                    if (e.isLoopEvent()) {
-                        if (step < e.loopTime) {
-                            return e.nextLoop();
-                        } else {
-                            return e.gotoLoopAfter(this.gameTime)
-                        }
-
-                    } else {
-                        return;
-                    }
+        let newEvents = [];
+        this.events.forEach((event) => {
+            if (event.time.getTime() <= this.gameTime.getTime()) {
+                this.happend.push(event.name);
+                if (event.isLoopEvent()) {
+                    event.gotoLoopAfter(new LS_Time(0, 0, this.gameTime.time + step));
+                    newEvents.push(event)
                 }
-            }, this
-        );
-        this.listeners.forEach((e) => e.mail(this.happend));
+            } else {
+                newEvents.push(event)
+            }
+        })
+        this.events = newEvents;
+        if (this.happend.length > 0) {
+            this.listeners.forEach((e) => e(this.happend));
+        }
         this.happend = [];
     }
 
@@ -265,6 +264,18 @@ class TimeManager {
         this.gameTime.skipDays(days);
         this.tiktok();
     }
+
+    run() {
+        setInterval(() => {
+            tm.tiktok(1);
+            Object.keys(idx_map).forEach(
+                (name) => {
+                    isTriggerd(name)
+                }
+            )
+        }, 1000)
+
+    }
 }
 
 /**
@@ -276,12 +287,8 @@ class EventCollector {
         this.box = []
     }
 
-    mail(eventNames) {
-        this.box.concat(eventNames)
-    }
-
     exist(findName) {
-        return this.box.some((name) => name === findName);
+        return this.box.some((name) => name == findName)
     }
 
     count(findName) {
@@ -297,8 +304,11 @@ class EventCollector {
 
 ec = new EventCollector();
 tm = new TimeManager();
-tm.addListener(ec);
-setInterval(tm.tiktok(), ONE_MINUTE);
+tm.addListener((name) => {
+    ec.box.push(name)
+});
+tm.run()
+
 
 
 /**
@@ -313,11 +323,21 @@ setInterval(tm.tiktok(), ONE_MINUTE);
  * @param {string} name - 事件名称
  */
 function isTriggerd(name) {
-    return ec.take(name)
+    let status = ec.exist(name);
+    console.log(`At${游戏时间()} :${name} is ${status}`);
+    if (status) {
+        $gameVariables.setValue(idx_map[name], 1);
+    } else {
+        $gameVariables.setValue(idx_map[name], 0);
+    }
 }
 
 function addMinuteLoopEvent(name, day, hour, minute, freq) {
     tm.addEvent(TimeEventGenerator(EVENT_TYPE.MINUTE_LOOP, name, new LS_Time(day, hour, minute), freq))
+}
+
+function 游戏时间() {
+    return tm.gameTime.time
 }
 
 function addHourLoopEvent(name, day, hour, minute, freq) {
@@ -329,9 +349,15 @@ function addDayLoopEvent(name, day, hour, minute, freq) {
 }
 
 function addTimeEvent(name, day, hour, minute) {
-    tm.addEvent(TimeEventGenerator(EVENT_TYPE.ONE_SHOT, new LS_Time(day, hour, minute)))
+    tm.addEvent(TimeEventGenerator(EVENT_TYPE.ONE_SHOT, name, new LS_Time(day, hour, minute)))
 }
 
 function nextDays(days) {
     tm.nextDays(days)
+}
+var idx_map = {}
+
+function 增加事件(name, day, hour, minute, index) {
+    addTimeEvent(name, day, hour, minute)
+    idx_map[name] = index;
 }
