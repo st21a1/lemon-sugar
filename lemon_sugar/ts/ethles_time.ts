@@ -1,3 +1,4 @@
+'use strict'
 /*:
  * @plugindesc Game time event mode support.
  * @author ethan miles
@@ -14,13 +15,7 @@
  *
  */
 
-enum EventType {
-  OneShot,
-  SecondLoop,
-  MinuteLoop,
-  HourLoop,
-  DayLoop
-}
+
 
 export interface ITime {
   getSeconds(): number;
