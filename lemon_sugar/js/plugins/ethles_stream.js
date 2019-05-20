@@ -4,7 +4,7 @@
  * @Author: st21a1
  * @LastEditors: Please set LastEditors
  * @Date: 2019-05-11 00:19:02
- * @LastEditTime: 2019-05-17 02:05:04
+ * @LastEditTime: 2019-05-21 02:00:48
  */
 
  /**
@@ -43,12 +43,26 @@ class Stream_Time {
     constructor(){
         this.start_time=0;
         this.end_time=0;
-        this.isLive
+        this.isLive = false
     }
 
 }
 
+// 每天可以在自宅电脑处进行直播
+// 通过游戏行动获得更多直播选项
+// 直播收益为
+// sc=固定收益+人气值*直播技能参数（X-Y之间浮动）
+// 收获人气=直播技能参数（X-Y之间浮动）
+// 扣除（直播技能参数）健康值
+// 经过（固定值）时间
+// 直播实例
+// 在道具店购买《DMC》后 直播槻泣，获得2000（固定）+2000（人气值）（2.0-4.0）=6000-10000不等的sc和500-750不等的人气值。
 
+// 健康值
+// 健康值总量为100
+// 健康值和时间将作为限制玩家行动的规则
+// 健康值归零时，时间强制调整至次日12：00，强制传送到【医院】，扣除（固定金额）金钱，回复50健康值。
+// 健康值可以使用金币在【医院】处恢复（该项是否消耗时间视剧本丰富程度决定）
 /**
  * @description: 
  * @param sc_money 本次配信sc收入
@@ -66,12 +80,32 @@ class Live_income{
         this.broadcast_status = 0;
     }
 }
-
-function getincome(stable_income,broadcast_status){
+/**
+ * @description: 获取本次直播收入
+ * @param {number} stable_income 固定收益
+ * @param {number} subscribe_num 人气值(订阅数)
+ * @param {type} broadcast_status 直播状态
+ * @return: 
+ */
+function getsc(stable_income,broadcast_status){
     var income =stable_income+subscribe_num*broadcast_status
     return income
 
 }
+/**
+ * @description: 获取直播技能参数（直播状态）
+ * @param {number} minNum 技能参数最小值
+ * @param {number} maxNum 技能参数最大值
+ * @return:  num 目标随机值
+ */
+function getbroadcast_status(minNum,maxNum){
+    var Range = maxNum - minNum;
+    var Rand = Math.random();
+    var num = minNum + Math.round(Rand * Range); //四舍五入
+    return num;
+}
+
+
 
 
 //检验接口对象,同时把方法名放进数组中
