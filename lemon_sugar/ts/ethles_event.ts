@@ -1,32 +1,30 @@
+'use strict'
 import { ITime, SimpleTime } from "./ethles_time";
 
 enum EventStatus {
   Pending,
   Started,
   Done,
-  Error
+  Error,
 }
 
 interface IEvent {
-  activeFunc: Promise<number>;
-  status: EventStatus;
+  getID(): string
+  getStatus(): EventStatus;
 }
 
 export interface ITimeEvent extends IEvent {
-  activeTime: ITime;
 }
 
 export class SimpleTimeEvent implements ITimeEvent {
-  activeFunc: Promise<number>;
   activeTime: SimpleTime;
   status: EventStatus;
-  constructor(parameters) {}
+  constructor(parameters) { }
 }
 
 export class LoopTimeEvent implements ITimeEvent {
-  activeFunc: Promise<number>;
   activeTime: SimpleTime;
   status: EventStatus;
   loopDuration: SimpleTime;
-  constructor(parameters) {}
+  constructor(parameters) { }
 }
