@@ -14,7 +14,7 @@
  */
 class Vtuber {
     constructor(money) {
-        this.stream = new Youtube_Stream();
+        this.stream = ys;
         this.health = 100;
         this.money = money || 0;
     }
@@ -45,13 +45,17 @@ class Stream_Time {
         this.end_time=0;
         this.isLive = false
     }
+    getStream_Time(){
+        return this.end_time-this.start_time
+    }
 
 }
 
+var ys=new Youtube_Stream()
 // 每天可以在自宅电脑处进行直播
 // 通过游戏行动获得更多直播选项
 // 直播收益为
-// sc=固定收益+人气值*直播技能参数（X-Y之间浮动）
+// /sc=固定收益+人气值*直播技能参数（X-Y之间浮动）
 // 收获人气=直播技能参数（X-Y之间浮动）
 // 扣除（直播技能参数）健康值
 // 经过（固定值）时间
@@ -77,7 +81,7 @@ class Live_income{
         this.sc_money = new income();
         this.stream_time = 0;
         this.stable_income = 500;
-        this.broadcast_status = 0;
+        this.broadcast_status = getbroadcast_status(0,1);
     }
 }
 /**
@@ -106,26 +110,35 @@ function getbroadcast_status(minNum,maxNum){
 }
 
 
+/**
+ * ==================================
+ * --------------API-----------------
+ * ==================================
+ */
 
+function 开始配信(){
+    Stream_Time.start_time=游戏时间()
+    Stream_Time.isLive=true
 
-//检验接口对象,同时把方法名放进数组中
-var Interface = function(name,methods) {
-    //判断接口的参数个数(第一个为接口对象,第二个为参数数组)
-    if(arguments.length != 2) {
-        throw new Error('创建的接口对象参数必须为两个,第二个为方法数组')
-    }
-    //接口对象引用名
-    this.name = name;
-    //自己的属性
-    this.methods = [];//定义一个内置的空数组对象 等待接受methods里的元素（方法名称）
-    //判断数组是否中的元素是否为string的字符串
-    for (var i = 0 ; i < methods.length; i++) {
-        //判断方法数组里面是否为string(字符串)的属性
-        if(typeof methods[i] != 'string') {
-            throw new Error('方法名必须是string类型的!')
-        }
-        //把他放在接口对象中的methods中(把接口方法名放在Interface对象的数组中)
-        this.methods.push(methods[i]);
+}
+
+function 结束配信(){
+    Stream_Time.end_time=游戏时间()
+    Stream_Time.isLive=false
+    update_Live();
+}
+
+function update_Live(){
+    ys.stream_time=Stream_Time.getStream_Time()
+    ys.total_stream_time=ys.total_stream_time+ys.stream_time
+    ys.subscribe_num=ys.subscribe_num+1000*(getbroadcast_status(0,1))
+    update_Vtuber()
+}
+
+function update_Vtuber(){
+    Vtuber.health=100*(1-getbroadcast_status(0,1))
+    if(ys.sc_status){
+        Vtuber.money=Vtuber.money+getsc(500,ys.subscribe_num)
     }
 }
 
